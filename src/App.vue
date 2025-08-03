@@ -4,6 +4,9 @@
       <Navigation />
       <RouterView />
     </div>
+    <footer>
+      © 2025 Bowen Farm. All rights reserved.
+    </footer>
   </main>
 </template>
 
@@ -12,17 +15,18 @@ import { RouterView } from 'vue-router'
 import Navigation from './components/Navigation.vue'
 </script>
 
-<style>
+<style scoped>
 main {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
-.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  max-width: 800px;
-  width: 100%;
+footer {
+  margin-top: auto;
+  background-color: #333;
+  color: white;
+  padding: 1rem;
+  text-align: center;
 }
 </style>
