@@ -8,6 +8,7 @@
     "qa": "vite --mode qa",
     "prod": "vite --mode prod",
     "build": "run-p type-check \"build-only {@}\" --",
+    "build-prod": "vite build --mode prod",
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --build"
