@@ -2,8 +2,8 @@
   <div class="login">
     <h1>Login</h1>
     <form @submit.prevent="handleLogin">
-      <label>Email</label>
-      <input type="email" v-model="email" required />
+      <label>Username</label>
+      <input type="text" v-model="username" required />
 
       <label>Password</label>
       <input type="password" v-model="password" required />
@@ -15,13 +15,21 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { AuthService } from '@/services/auth'
 
-const email = ref('')
+const username = ref('')
 const password = ref('')
 
-function handleLogin() {
-  console.log('Logging in with:', email.value, password.value)
-  alert('Mock login submitted.')
+async function handleLogin() {
+  console.log('Logging in with:', username.value, password.value)
+  await AuthService.login(username.value, password.value).then(() => {
+    console.log('Login successful')
+    // Redirect to home
+    window.location.href = '/'
+  }).catch(error => {
+    console.error('Login failed:', error)
+    // Handle login failure (e.g., show an error message)
+  })
 }
 </script>
 

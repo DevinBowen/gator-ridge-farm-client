@@ -9,6 +9,7 @@
       <RouterLink to="/login">Login</RouterLink>
       <RouterLink to="/market">Market</RouterLink>
       <RouterLink to="/cart">Cart</RouterLink>
+      <button @click="logout">Logout</button>
     </div>
   </nav>
 </template>
@@ -16,10 +17,16 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
+import { AuthService } from '@/services/auth'
 
 const isOpen = ref(false)
 const toggleMenu = () => {
   isOpen.value = !isOpen.value
+}
+
+const logout = () => {
+  AuthService.logout()
+  window.location.href = '/login'
 }
 </script>
 
