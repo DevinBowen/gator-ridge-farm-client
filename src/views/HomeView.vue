@@ -3,7 +3,7 @@
   <div class="home">
     <section class="hero">
       <div class="hero-content">
-        <h1>Welcome to Bowen Family Farm</h1>
+        <h1>Welcome to Gator Ridge Farm</h1>
         <p>Fresh eggs, healthy livestock, and honest farm living.</p>
         <button>View Products</button>
       </div>
@@ -67,7 +67,7 @@ const sampleItems = [
 
 .hero {
   position: relative;
-  background: url('/images/farm-hero.jpg') no-repeat center center;
+  background: url('/images/farm.jpg') no-repeat center center;
   background-size: cover;
   padding: 3rem 1.5rem;
   text-align: center;
