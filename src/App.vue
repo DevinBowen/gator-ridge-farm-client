@@ -1,18 +1,16 @@
 <template>
   <main>
     <div class="container">
-      <Navigation />
       <RouterView />
     </div>
     <footer>
-      © 2025 Bowen Farm. All rights reserved.
+      © 2025 Gator Ridge Farm. All rights reserved.
     </footer>
   </main>
 </template>
 
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
-import Navigation from './components/Navigation.vue'
 </script>
 
 <style scoped>
@@ -28,5 +26,6 @@ footer {
   color: white;
   padding: 1rem;
   text-align: center;
+  font-size: 0.75rem;
 }
 </style>

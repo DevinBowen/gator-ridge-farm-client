@@ -9,8 +9,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView,
-      meta: { requiresAuth: true }
+      component: HomeView
     },
     {
       path: '/login',
@@ -20,24 +19,28 @@ const router = createRouter({
     {
       path: '/market',
       name: 'market',
-      component: () => import('../views/MarketView.vue'),
-      meta: { requiresAuth: true }
+      component: () => import('../views/MarketView.vue')
     },
     {
       path: '/about',
       name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue'),
-      meta: { requiresAuth: true }
+      component: () => import('../views/AboutView.vue')
     },
     {
       path: '/cart',
       name: 'cart',
-      component: () => import('../views/CartView.vue'),
+      component: () => import('../views/CartView.vue')
+    },
+    {
+      path: '/admin',
+      name: 'admin',
+      component: () => import('../views/AdminView.vue'),
       meta: { requiresAuth: true }
     },
+    {
+      path: '/:catchAll(.*)',
+      redirect: { name: 'home' }
+    }
   ],
 })
 
@@ -45,7 +48,7 @@ router.beforeEach((to, from, next) => {
   if(to.meta.requiresAuth) {
     const authenticated = AuthService.isAuthenticated()
     if (!authenticated) {
-      next({ name: 'login' })
+      return next({ name: 'login' })
     }
   }
   next()

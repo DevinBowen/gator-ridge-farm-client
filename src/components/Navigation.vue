@@ -5,11 +5,17 @@
     </button>
     <div :class="['menu', { open: isOpen }]">
       <RouterLink to="/">Home</RouterLink>
-      <RouterLink to="/about">About</RouterLink>
-      <RouterLink to="/login">Login</RouterLink>
       <RouterLink to="/market">Market</RouterLink>
       <RouterLink to="/cart">Cart</RouterLink>
-      <button @click="logout">Logout</button>
+      <RouterLink to="/about">About</RouterLink>
+      <RouterLink v-show="AuthService.isAuthenticated()" to="/admin">Admin</RouterLink>
+      <div class >
+        <RouterLink v-if="!AuthService.isAuthenticated()" to="/login">Login</RouterLink>
+        <RouterLink v-else to="/" @click="logout">Logout</RouterLink>
+      </div>
+      <button class="profile-toggle">
+        <a href="#"></a>
+      </button>
     </div>
   </nav>
 </template>
@@ -26,7 +32,7 @@ const toggleMenu = () => {
 
 const logout = () => {
   AuthService.logout()
-  window.location.href = '/login'
+  window.location.href = '/'
 }
 </script>
 
@@ -89,6 +95,19 @@ nav {
   .menu a {
     padding: 0;
     margin-right: 1rem;
+  }
+
+  .profile-toggle {
+    position: absolute;
+    align-self: center;
+    right: 1rem;
+    border: none;
+    background-color: white;
+    cursor: pointer;
+    height: 2rem;
+    width: 2rem;
+    border-radius: 50%;
+    line-height: normal;
   }
 }
 </style>

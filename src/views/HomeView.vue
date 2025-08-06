@@ -1,4 +1,5 @@
 <template>
+  <Navigation />
   <div class="home">
     <section class="hero">
       <div class="hero-content">
@@ -34,6 +35,8 @@
 </template>
 
 <script lang="ts" setup>
+import Navigation from '@/components/Navigation.vue';
+
 const sampleItems = [
   {
     id: 1,

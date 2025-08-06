@@ -1,8 +1,8 @@
 <template>
   <Navigation />
   <div class="view">
-    <h1>About Us</h1>
-    <p>This is the About page for Bowen Farm.</p>
+    <h1>Admin</h1>
+    <p>This is the Admin page for Bowen Farm.</p>
   </div>
 </template>
 

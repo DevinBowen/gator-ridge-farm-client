@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { useCookies } from 'vue3-cookies'
+import { useMainStore } from '@/stores/main'
 
 const AUTH_BASE_URL = import.meta.env.VITE_AUTH_API_BASE_URL
 const ENV = import.meta.env.MODE
@@ -33,6 +34,10 @@ export class AuthService {
     }
 
     static isAuthenticated() {
+        // needs to change in the future, a user can edit the store in the console
+        const mainStore = useMainStore()
+        if (mainStore.authenticated) return true
+
         const cookieName = getCookieName()
         const token = cookies.get(cookieName)
 
@@ -41,6 +46,8 @@ export class AuthService {
         }
 
         try {
+            mainStore.toggleAuthentication()
+            // add check to validate token with backend
             return true
         } catch (error) {
             console.error('Error validating token:', error)

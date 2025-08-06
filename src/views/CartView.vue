@@ -1,4 +1,5 @@
 <template>
+  <Navigation />
   <div class="cart">
     <h1>Your Cart</h1>
     <div v-if="cart.items.length === 0">
@@ -19,6 +20,7 @@
 </template>
 
 <script setup lang="ts">
+import Navigation from '@/components/Navigation.vue';
 import { useCartStore } from '../stores/cart'
 const cart = useCartStore()
 </script>

@@ -1,4 +1,5 @@
 <template>
+  <Navigation />
   <div class="login">
     <h1>Login</h1>
     <form @submit.prevent="handleLogin">
@@ -16,6 +17,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { AuthService } from '@/services/auth'
+import Navigation from '@/components/Navigation.vue'
 
 const username = ref('')
 const password = ref('')
