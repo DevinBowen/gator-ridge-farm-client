@@ -54,4 +54,13 @@ export class AuthService {
             return false
         }
     }
+
+    static async createAccount(username: string, password: string) {
+        try {
+            const response = await axios.post(`${AUTH_BASE_URL}/register`, { username, password })
+            return response.data
+        } catch (error: any) {
+            throw new Error('Account creation failed: ' + error.response.data.message)
+        }
+    }
 }

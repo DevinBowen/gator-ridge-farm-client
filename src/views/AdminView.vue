@@ -143,7 +143,7 @@
     </div>
 
     <!-- Error/Success Messages -->
-    <div v-if="message" :class="['message', messageType]">
+    <div v-show="message" :class="['message', messageType]">
       {{ message }}
     </div>
   </div>
@@ -152,7 +152,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import Navigation from '../components/Navigation.vue'
-import axios from 'axios'
+import { AuthService } from '@/services/auth'
 
 // Reactive data
 const newAccount = ref({
@@ -186,17 +186,10 @@ const loading = ref({
   fetchItems: false
 })
 
-// API base URL (you may need to adjust this)
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api'
-
-// Functions
 async function createAccount() {
   loading.value.createAccount = true
   try {
-    await axios.post(`${API_BASE_URL}/admin/create-account`, {
-      username: newAccount.value.username,
-      password: newAccount.value.password
-    })
+    await AuthService.createAccount(newAccount.value.username, newAccount.value.password)
     
     showMessage('Account created successfully!', 'success')
     newAccount.value.username = ''
@@ -211,13 +204,9 @@ async function createAccount() {
 async function addItemType() {
   loading.value.addItem = true
   try {
-    const response = await axios.post(`${API_BASE_URL}/admin/items`, {
-      name: newItem.value.name,
-      description: newItem.value.description,
-      price: newItem.value.price,
-      stock: newItem.value.stock
-    })
-    
+    // API call
+    const response = {data: {id: Date.now(), ...newItem.value}}
+
     items.value.push(response.data)
     showMessage('Item added successfully!', 'success')
     
@@ -237,9 +226,7 @@ async function updateStock(itemId: number, newStock: number) {
   
   loading.value.updateStock = true
   try {
-    await axios.patch(`${API_BASE_URL}/admin/items/${itemId}/stock`, {
-      stock: newStock
-    })
+    // API call
     
     const itemIndex = items.value.findIndex(item => item.id === itemId)
     if (itemIndex !== -1) {
@@ -257,7 +244,11 @@ async function updateStock(itemId: number, newStock: number) {
 async function fetchItems() {
   loading.value.fetchItems = true
   try {
-    const response = await axios.get(`${API_BASE_URL}/admin/items`)
+    // API call
+    const response = {data: [
+      { id: 1, name: 'Apple', description: 'Fresh apples', price: 0.5, stock: 100 },
+      { id: 2, name: 'Banana', description: 'Ripe bananas', price: 0.3, stock: 150 }
+    ]} // Simulated API response
     items.value = response.data
   } catch (error: any) {
     showMessage(`Failed to fetch items: ${error.response?.data?.message || error.message}`, 'error')
