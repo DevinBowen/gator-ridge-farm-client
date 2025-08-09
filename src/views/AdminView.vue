@@ -153,6 +153,7 @@
 import { ref, onMounted } from 'vue'
 import Navigation from '../components/Navigation.vue'
 import { AuthService } from '@/services/auth'
+import { GRFService } from '@/services/GRF'
 
 // Reactive data
 const newAccount = ref({
@@ -204,10 +205,10 @@ async function createAccount() {
 async function addItemType() {
   loading.value.addItem = true
   try {
-    // API call
-    const response = {data: {id: Date.now(), ...newItem.value}}
+    const response = await GRFService.createProduct(newItem.value)
+    console.log(response)
 
-    items.value.push(response.data)
+    await fetchItems()
     showMessage('Item added successfully!', 'success')
     
     newItem.value.name = ''
@@ -244,12 +245,9 @@ async function updateStock(itemId: number, newStock: number) {
 async function fetchItems() {
   loading.value.fetchItems = true
   try {
-    // API call
-    const response = {data: [
-      { id: 1, name: 'Apple', description: 'Fresh apples', price: 0.5, stock: 100 },
-      { id: 2, name: 'Banana', description: 'Ripe bananas', price: 0.3, stock: 150 }
-    ]} // Simulated API response
-    items.value = response.data
+    const response = await GRFService.readProductAllActive()
+    console.log('Fetched active products:', response)
+    items.value = response
   } catch (error: any) {
     showMessage(`Failed to fetch items: ${error.response?.data?.message || error.message}`, 'error')
   } finally {
