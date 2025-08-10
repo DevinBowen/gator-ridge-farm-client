@@ -1,33 +1,40 @@
 <template>
   <nav>
-    <button class="menu-toggle" @click="toggleMenu">
+    <button class="menu-toggle" @click="toggleMenu" aria-label="Toggle menu" :aria-expanded="isOpen">
       ☰
     </button>
     <div :class="['menu', { open: isOpen }]">
-      <RouterLink to="/">Home</RouterLink>
-      <RouterLink to="/market">Market</RouterLink>
-      <RouterLink to="/cart">Cart</RouterLink>
-      <RouterLink to="/about">About</RouterLink>
-      <RouterLink v-show="AuthService.isAuthenticated()" to="/admin">Admin</RouterLink>
-      <div class >
-        <RouterLink v-if="!AuthService.isAuthenticated()" to="/login">Login</RouterLink>
+      <RouterLink to="/" @click="closeMenu">Home</RouterLink>
+      <RouterLink to="/market" @click="closeMenu">Market</RouterLink>
+      <RouterLink to="/cart" class="cart-link" @click="closeMenu">
+        Cart
+        <span v-if="cart.totalItems" class="badge">{{ cart.totalItems }}</span>
+      </RouterLink>
+      <RouterLink to="/about" @click="closeMenu">About</RouterLink>
+      <RouterLink v-show="AuthService.isAuthenticated()" to="/admin" @click="closeMenu">Admin</RouterLink>
+
+      <div class="auth-actions">
+        <RouterLink v-if="!AuthService.isAuthenticated()" to="/login" @click="closeMenu">Login</RouterLink>
         <RouterLink v-else to="/" @click="logout">Logout</RouterLink>
       </div>
-      <button class="profile-toggle">
-        <a href="#"></a>
-      </button>
     </div>
   </nav>
-</template>
+  </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { AuthService } from '@/services/auth'
+import { useCartStore } from '@/stores/cart'
+
+const cart = useCartStore()
 
 const isOpen = ref(false)
 const toggleMenu = () => {
   isOpen.value = !isOpen.value
+}
+const closeMenu = () => {
+  isOpen.value = false
 }
 
 const logout = () => {
@@ -60,13 +67,15 @@ nav {
   display: none;
   flex-direction: column;
   margin-top: 1rem;
+  gap: 0.25rem;
 }
 
 .menu a {
   color: white;
   text-decoration: none;
-  padding: 0.5rem 0;
+  padding: 0.75rem 0;
   font-weight: 500;
+  display: block;
 }
 
 /* Show menu when toggled open */
@@ -77,6 +86,30 @@ nav {
 /* Active link style */
 .menu a.router-link-active {
   text-decoration: underline;
+}
+
+.auth-actions {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.cart-link {
+  position: relative;
+}
+.badge {
+  display: inline-block;
+  margin-left: 0.5rem;
+  min-width: 1.5rem;
+  padding: 0 0.4rem;
+  height: 1.25rem;
+  line-height: 1.25rem;
+  text-align: center;
+  background: #fff;
+  color: #2e7d32;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
 }
 
 /* Larger screens - horizontal nav */
@@ -90,6 +123,7 @@ nav {
     flex-direction: row;
     gap: 1rem;
     margin-top: 0;
+    align-items: center;
   }
 
   .menu a {
@@ -97,17 +131,10 @@ nav {
     margin-right: 1rem;
   }
 
-  .profile-toggle {
-    position: absolute;
-    align-self: center;
-    right: 1rem;
-    border: none;
-    background-color: white;
-    cursor: pointer;
-    height: 2rem;
-    width: 2rem;
-    border-radius: 50%;
-    line-height: normal;
+  .auth-actions {
+    margin-left: auto;
+    margin-top: 0;
+    align-items: center;
   }
 }
 </style>

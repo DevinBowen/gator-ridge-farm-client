@@ -15,70 +15,103 @@
 </template>
 
 <script setup lang="ts">
-import Navigation from '@/components/Navigation.vue'
+import { ref, onMounted } from 'vue'
 import { useCartStore } from '../stores/cart'
+import Navigation from '@/components/Navigation.vue'
+import { GRFService } from '@/services/GRF'
+
+interface Product {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  stock: number;
+  image: string;
+}
+
 const cart = useCartStore()
-const items = [
-  {
-    id: 1,
-    name: 'Dozen Free-Range Eggs',
-    description: 'Laid this week by happy hens.',
-    price: 5.00,
-    stock: 3,
-    image: 'https://via.placeholder.com/150',
-  },
-  {
-    id: 2,
-    name: 'Whole Chicken',
-    description: 'Pasture-raised, fresh processed.',
-    price: 20.00,
-    stock: 2,
-    image: 'https://via.placeholder.com/150',
-  },
-  {
-    id: 3,
-    name: 'Goat',
-    description: '2-year-old Nigerian Dwarf.',
-    price: 150.00,
-    stock: 1,
-    image: 'https://via.placeholder.com/150',
-  },
-]
+const items = ref<Product[]>([])
+
+async function fetchItems() {
+  try {
+    const response = await GRFService.readProductAllActive()
+    items.value = response
+  } catch (error: any) {
+    // Optionally handle error, e.g. show a message
+    console.error('Failed to fetch items:', error)
+  }
+}
+
+onMounted(() => {
+  fetchItems()
+})
 </script>
 
 <style scoped>
+
 .market {
   padding: 1rem;
+  max-width: 600px;
+  margin: 0 auto;
 }
+
 .items {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 1rem;
 }
+
 .item-card {
-  background-color: white;
-  border-radius: 8px;
+  background-color: #fff;
+  border-radius: 12px;
   padding: 1rem;
-  width: 200px;
-  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+  width: 100%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
+
 .item-card img {
   width: 100%;
+  max-width: 220px;
   height: auto;
-  border-radius: 4px;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
 }
+
 .price {
   font-weight: bold;
   margin-top: 0.5rem;
+  font-size: 1.1rem;
+  color: #388e3c;
 }
+
 button {
-  margin-top: 0.5rem;
-  padding: 0.5rem;
+  margin-top: 0.75rem;
+  padding: 0.75rem;
   background-color: #4CAF50;
   color: white;
   border: none;
   width: 100%;
-  border-radius: 4px;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
   cursor: pointer;
+  transition: background 0.2s;
+}
+button:active {
+  background-color: #388e3c;
+}
+
+@media (min-width: 600px) {
+  .items {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .item-card {
+    max-width: 220px;
+  }
 }
 </style>

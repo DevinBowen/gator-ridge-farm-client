@@ -3,7 +3,7 @@
   <div class="admin">
     <h1>Admin</h1>
     
-    <!-- Create Account Section -->
+    <!-- Account Section -->
     <div class="admin-section">
       <h2>Create Account</h2>
       <form @submit.prevent="createAccount" class="create-account-form">
@@ -33,10 +33,10 @@
       </form>
     </div>
 
-    <!-- Add Item Type Section -->
+    <!-- Add Item Section -->
     <div class="admin-section">
-      <h2>Add Item Type</h2>
-      <form @submit.prevent="addItemType" class="add-item-form">
+      <h2>Add Item</h2>
+      <form @submit.prevent="addItem" class="add-item-form">
         <div class="form-row">
           <div class="form-group">
             <label for="itemName">Item Name:</label>
@@ -102,12 +102,12 @@
           </thead>
           <tbody>
             <tr v-for="item in items" :key="item.id">
-              <td>{{ item.id }}</td>
-              <td>{{ item.name }}</td>
-              <td>{{ item.description }}</td>
-              <td>${{ item.price.toFixed(2) }}</td>
-              <td>{{ item.stock }}</td>
-              <td class="actions">
+              <td data-label="ID">{{ item.id }}</td>
+              <td data-label="Name">{{ item.name }}</td>
+              <td data-label="Description">{{ item.description }}</td>
+              <td data-label="Price">${{ item.price.toFixed(2) }}</td>
+              <td data-label="Stock">{{ item.stock }}</td>
+              <td class="actions" data-label="Actions">
                 <div class="stock-controls">
                   <button 
                     @click="updateStock(item.id, item.stock - 1)"
@@ -119,7 +119,7 @@
                   <input 
                     type="number" 
                     :value="item.stock"
-                    @change="updateStock(item.id, parseInt($event.target?.value) || 0)"
+                    @change="(e: Event) => updateStock(item.id, parseInt((e.target as HTMLInputElement).value, 10))"
                     :disabled="loading.updateStock"
                     class="stock-input"
                   />
@@ -202,7 +202,7 @@ async function createAccount() {
   }
 }
 
-async function addItemType() {
+async function addItem() {
   loading.value.addItem = true
   try {
     const response = await GRFService.createProduct(newItem.value)
@@ -227,7 +227,7 @@ async function updateStock(itemId: number, newStock: number) {
   
   loading.value.updateStock = true
   try {
-    // API call
+    await GRFService.updateProduct(itemId, { stock: newStock })
     
     const itemIndex = items.value.findIndex(item => item.id === itemId)
     if (itemIndex !== -1) {
@@ -272,17 +272,17 @@ onMounted(() => {
 
 <style scoped>
 .admin {
-  background-color: white;
-  padding: 2rem;
+  background-color: #fff;
+  padding: 1rem;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0,0,0,0.05);
-  max-width: 1200px;
+  max-width: 100%;
   margin: 0 auto;
 }
 
 .admin-section {
-  margin-bottom: 3rem;
-  padding-bottom: 2rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
   border-bottom: 1px solid #eee;
 }
 
@@ -302,13 +302,13 @@ h2 {
 
 .form-row {
   display: flex;
+  flex-direction: column;
   gap: 1rem;
-  flex-wrap: wrap;
 }
 
 .form-row .form-group {
-  flex: 1;
-  min-width: 200px;
+  width: 100%;
+  min-width: 0;
 }
 
 label {
@@ -320,10 +320,10 @@ label {
 
 input, textarea {
   width: 100%;
-  padding: 0.75rem;
+  padding: 1rem;
   border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
+  border-radius: 6px;
+  font-size: 1.05rem;
 }
 
 input:focus, textarea:focus {
@@ -335,11 +335,13 @@ input:focus, textarea:focus {
 button {
   background-color: #4CAF50;
   color: white;
-  padding: 0.75rem 1.5rem;
+  padding: 1rem;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  width: 100%;
   transition: background-color 0.2s;
 }
 
@@ -354,17 +356,20 @@ button:disabled {
 
 .table-container {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
+
 
 .items-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 1rem;
+  font-size: 0.95rem;
 }
 
 .items-table th,
 .items-table td {
-  padding: 1rem;
+  padding: 0.75rem;
   text-align: left;
   border-bottom: 1px solid #ddd;
 }
@@ -373,6 +378,9 @@ button:disabled {
   background-color: #f5f5f5;
   font-weight: 600;
   color: #333;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
 .items-table tr:hover {
@@ -383,29 +391,33 @@ button:disabled {
   text-align: center;
 }
 
+
 .stock-controls {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  align-items: stretch;
   gap: 0.5rem;
 }
 
 .stock-input {
-  width: 60px;
+  width: 100%;
   text-align: center;
-  padding: 0.25rem;
+  padding: 0.5rem;
+  font-size: 1rem;
+  appearance: textfield;
 }
 
 .btn-decrease,
 .btn-increase {
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
   padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
   font-size: 1.2rem;
+  border-radius: 4px;
 }
 
 .btn-decrease {
@@ -447,22 +459,95 @@ button:disabled {
   background-color: #f44336;
 }
 
-@media (max-width: 768px) {
+@media (min-width: 768px) {
   .admin {
-    padding: 1rem;
+    max-width: 1200px;
+    padding: 2rem;
   }
-  
   .form-row {
-    flex-direction: column;
+    flex-direction: row;
+    gap: 1rem;
+    flex-wrap: wrap;
   }
-  
+  .form-row .form-group {
+    min-width: 200px;
+    flex: 1;
+  }
   .stock-controls {
-    flex-direction: column;
-    gap: 0.25rem;
+    flex-direction: row;
+    align-items: center;
   }
-  
   .stock-input {
-    width: 80px;
+    width: 60px;
+  }
+  button {
+    width: auto;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 4px;
+  }
+}
+
+/* Mobile card-style table */
+@media (max-width: 767px) {
+  .items-table thead {
+    display: none;
+  }
+  .items-table, .items-table tbody, .items-table tr, .items-table td {
+    display: block;
+    width: 100%;
+  }
+  .items-table tr {
+    background: #fff;
+    margin-bottom: 0.75rem;
+    border-radius: 8px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+    overflow: hidden;
+  }
+  .items-table td {
+    display: grid;
+    grid-template-columns: 7rem 1fr;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border: none;
+    border-bottom: 1px solid #eee;
+  }
+  .items-table td:last-child {
+    border-bottom: none;
+  }
+  .items-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #555;
+  }
+  .items-table .actions {
+    text-align: left;
+    grid-template-columns: 1fr;
+  }
+  .items-table .actions::before {
+    margin-bottom: 0.25rem;
+  }
+  /* Make stock controls compact and horizontal inside mobile cards */
+  .items-table .actions .stock-controls {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .items-table .actions .stock-input {
+    width: auto;
+    flex: 1 1 120px;
+    min-width: 100px;
+    max-width: 160px;
+  }
+  .items-table .actions .btn-decrease,
+  .items-table .actions .btn-increase {
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
   }
 }
 </style>

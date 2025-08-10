@@ -24,4 +24,13 @@ export class GRFService {
         }
     }
 
+    static async updateProduct(id: number, body: {name?: string, description?: string, price?: number, stock?: number}) {
+        try {
+            const response = await axios.put(`${AUTH_BASE_URL}/product/update/${id}`, body)
+            return response.data
+        } catch (error: any) {
+            throw new Error('Product update failed: ' + error.message)
+        }
+    }
+
 }
